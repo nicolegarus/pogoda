@@ -1,0 +1,35 @@
+body {
+  background-color: #fff7ed;
+  font-family: "Lora", serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
+a {
+  color: #ea580c;
+}
+
+.search-form-button {
+  background: #ea580c;
+}
+
+.weather-app-details strong {
+  color: #fb7185;
+}
+.search-form-button:hover {
+  opacity: 0.9;
+}
+.weather-app {
+  background: white;
+  max-width: 600px;
+  margin: 30px auto;
+  box-shadow: 0 30px 50px rgba(65, 50, 100, 0.08);
+  padding: 30px;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.weather-app:hover {
+  transform: translateY(-4px);
+}
