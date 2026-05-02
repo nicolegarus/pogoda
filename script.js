@@ -32,8 +32,6 @@ function refreshWeather(response) {
   if (minutes < 10) {
     minutes = `0${minutes}`;
   }
-
-  // Set time AFTER calculating day/hours/minutes
   timeElement.innerHTML = `${day} ${hours}:${minutes}`;
 
   let windSpeed = Math.round(response.data.wind.speed * 3.6);
@@ -54,9 +52,34 @@ function handleSearchSubmit(event) {
   let searchInput = document.querySelector("#search-form-input");
   searchCity(searchInput.value);
 }
+function displayForecast() {
+  let forecastElement = document.querySelector("#forecast");
+
+  let days = ["Tue", "Wed", "Thu", "Fri", "Sat"];
+  let forecastHtml = "";
+
+  days.forEach(function (day) {
+    forecastHtml =
+      forecastHtml +
+      `
+      <div class="weather-forecast-day">
+        <div class="weather-forecast-date">${day}</div>
+        <div class="weather-forecast-icon">🌤️</div>
+        <div class="weather-forecast-temperatures">
+          <div class="weather-forecast-temperature">
+            <strong>15°</strong>
+          </div>
+          <div class="weather-forecast-temperature">9°</div>
+        </div>
+      </div>
+      `;
+  });
+
+  forecastElement.innerHTML = forecastHtml;
+}
 
 let searchFormElement = document.querySelector("#search-form");
 searchFormElement.addEventListener("submit", handleSearchSubmit);
 
-// Load default city
 searchCity("Warsaw");
+displayForecast();
