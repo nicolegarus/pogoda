@@ -5,6 +5,11 @@ function refreshWeather(response) {
   let humidityElement = document.querySelector("#humidity");
   let windSpeedElement = document.querySelector("#wind-speed");
   let timeElement = document.querySelector("#time");
+  let iconElement = document.querySelector("#main-icon");
+
+  iconElement.innerHTML = `
+  <img src="https://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png" />
+`;
 
   console.log(response.data);
 
@@ -12,10 +17,10 @@ function refreshWeather(response) {
   descriptionElement.innerHTML = response.data.weather[0].description;
   humidityElement.innerHTML = `${response.data.main.humidity}%`;
 
-  // Calculate local time
   let timestamp = response.data.dt * 1000;
   let timezoneOffset = response.data.timezone * 1000;
   let localTime = new Date(timestamp + timezoneOffset);
+  getForecast(response.data.name);
 
   let days = [
     "Sunday",
@@ -52,34 +57,51 @@ function handleSearchSubmit(event) {
   let searchInput = document.querySelector("#search-form-input");
   searchCity(searchInput.value);
 }
-function displayForecast() {
-  let forecastElement = document.querySelector("#forecast");
+function getForecast(city) {
+  let apiKey = "8051d8dad8aaf85f7ca939803db9f063";
 
-  let days = ["Tue", "Wed", "Thu", "Fri", "Sat"];
+  let apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+
+  axios.get(apiUrl).then(displayForecast);
+}
+
+function displayForecast(response) {
   let forecastHtml = "";
 
-  days.forEach(function (day) {
-    forecastHtml =
-      forecastHtml +
-      `
-      <div class="weather-forecast-day">
-        <div class="weather-forecast-date">${day}</div>
-        <div class="weather-forecast-icon">🌤️</div>
-        <div class="weather-forecast-temperatures">
-          <div class="weather-forecast-temperature">
-            <strong>15°</strong>
+  response.data.list.forEach(function (forecast) {
+    if (forecast.dt_txt.includes("12:00:00")) {
+      forecastHtml += `
+        <div class="weather-forecast-day">
+          <div class="weather-forecast-date">
+            ${new Date(forecast.dt * 1000).toLocaleDateString("en-GB", {
+              weekday: "short",
+            })}
           </div>
-          <div class="weather-forecast-temperature">9°</div>
+
+          <div class="weather-forecast-icon">
+            <img src="https://openweathermap.org/img/wn/${
+              forecast.weather[0].icon
+            }@2x.png" />
+          </div>
+
+          <div class="weather-forecast-temperatures">
+            <div class="weather-forecast-temperature">
+              <strong>${Math.round(forecast.main.temp_max)}°</strong>
+            </div>
+
+            <div class="weather-forecast-temperature">
+              ${Math.round(forecast.main.temp_min)}°
+            </div>
+          </div>
         </div>
-      </div>
       `;
+    }
   });
 
-  forecastElement.innerHTML = forecastHtml;
+  document.querySelector("#forecast").innerHTML = forecastHtml;
 }
 
 let searchFormElement = document.querySelector("#search-form");
 searchFormElement.addEventListener("submit", handleSearchSubmit);
 
 searchCity("Warsaw");
-displayForecast();
